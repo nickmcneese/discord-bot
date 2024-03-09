@@ -58,7 +58,7 @@ def find_member(guild, username):
     return member
 
 @bot.command()
-async def rank(ctx, username):
+async def rating(ctx, username):
     member = find_member(ctx.guild, username).name
     ranking_document = ranking_collection.find_one({"member": member})
     delta = ranking_document["ranking_delta"]
