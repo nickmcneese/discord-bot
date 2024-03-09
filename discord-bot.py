@@ -193,7 +193,7 @@ async def stonks(ctx, username, input):
         await ctx.send("Invalid Format")
 
     new_rank = ranking_collection.find_one({"member": member})["ranking"]
-    await ctx.send("Updated rating for " + member + "! New rating is: " + str(new_rank) + " " + rank_emoji)
+    await ctx.send("Updated rating for " + username + "! New rating is: " + str(new_rank) + " " + rank_emoji)
 
 @stonks.error
 async def stonks_error(ctx, error):
