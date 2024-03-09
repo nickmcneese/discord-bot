@@ -5,10 +5,10 @@ to spend how you would like on other members in the server.
 
 Commands include:
 
-!stonks <user> <+-><nubmer> which assigns an increase or decrease to a user you specify.
+!stonks [user] [+->][number] which assigns an increase or decrease to a user you specify.
 
-!rating <user> shows the current rating of a user
+!rating [user] shows the current rating of a user
 
-!currency show your daily currency remaining
+!currency shows your daily currency remaining
 
 Makes use of mongoDB to store info about the users and also calls a scheduler that updates everyone's currency daily.
