@@ -12,3 +12,4 @@ Commands include:
 !currency shows your daily currency remaining
 
 Makes use of mongoDB to store info about the users and also calls a scheduler that updates everyone's currency daily.
+Hosted on heroku!
