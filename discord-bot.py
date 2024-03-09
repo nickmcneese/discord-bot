@@ -1,12 +1,16 @@
 import discord
 import pymongo
 import re
+import os
+from dotenv import load_dotenv
 from discord.ext import commands
 from discord import Client, Intents
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
-uri = ""
+load_dotenv()
+uri = os.getenv("MONGO_URI")
+
 client = MongoClient(uri, server_api=ServerApi('1'))
 
 db = client["Users"]
@@ -14,10 +18,30 @@ currency_collection = db["currency"]
 ranking_collection = db["ranking"]
 
 
-BOT_TOKEN = ""
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 MAX_USER_DAILY_RANKING_CURRENCY = 50
 
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
+
+@bot.event
+async def on_guild_join(guild):
+    print(f"Added to {guild.name}. Adding all members to the databases...")
+    for member in guild.members:
+        if member.name != "rating-bot":
+            ranking_data = {
+                "member": member.name,
+                "ranking": 0,
+                "ranking_delta": 0
+            }
+            currency_data = {
+                "author": member.name,
+                "amount_positive": MAX_USER_DAILY_RANKING_CURRENCY,
+                "amount_negative": MAX_USER_DAILY_RANKING_CURRENCY
+            }
+            ranking_collection.insert_one(ranking_data)
+            currency_collection.insert_one(currency_data)
+
+    print(f"Added all members of {guild.name} to the databases.")
 
 #want to add new discord server members to both databases
 @bot.event
