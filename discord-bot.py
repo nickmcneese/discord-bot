@@ -92,7 +92,7 @@ async def rating(ctx, username):
             rank_emoji = ":chart_with_upwards_trend:"
         else:
             rank_emoji = ":chart_with_downwards_trend:"
-        await ctx.send("Current rank: " + str(ranking_document["ranking"]) + " " + rank_emoji)
+        await ctx.send("Current rating: " + str(ranking_document["ranking"]) + " " + rank_emoji)
     else:
         await ctx.send("Error. This person is not in the server.")
     
@@ -193,7 +193,7 @@ async def stonks(ctx, username, input):
         await ctx.send("Invalid Format")
 
     new_rank = ranking_collection.find_one({"member": member})["ranking"]
-    await ctx.send("Updated rank for " + member + "! New rank is: " + str(new_rank) + " " + rank_emoji)
+    await ctx.send("Updated rating for " + member + "! New rating is: " + str(new_rank) + " " + rank_emoji)
 
 @stonks.error
 async def stonks_error(ctx, error):
