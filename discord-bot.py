@@ -97,13 +97,12 @@ async def rating(ctx, username):
         await ctx.send("Error. This person is not in the server.")
     
 def parse_input(input_string):
-    pattern = r'^[+-]\d+$'
+    pattern = r'^\d+$'
 
     if re.match(pattern, input_string):
         # Valid format
-        sign = input_string[0]
-        number = int(input_string[1:])
-        return sign, number
+        number = int(input_string)
+        return number
     else:
         # Invalid format
         return "Error"
@@ -118,7 +117,7 @@ async def buy(ctx, username, input):
     if result == "Error":
         await ctx.send("Error, wrong format!")
         return
-    sign, integer = result
+    integer = result
 
     #check if user exists
     member = find_member(ctx.guild, username).name
@@ -187,7 +186,7 @@ async def sell(ctx, username, input):
     if result == "Error":
         await ctx.send("Error, wrong format!")
         return
-    sign, integer = result
+    integer = result
 
     #check if user exists
     member = find_member(ctx.guild, username).name
