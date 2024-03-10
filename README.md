@@ -5,7 +5,9 @@ to spend how you would like on other members in the server.
 
 Commands include:
 
-!stonks [user] [+-][number] which assigns an increase or decrease to a user you specify.
+!buy [user] [integer] allows you to increase the rating of user
+
+!sell [user] [integer] allows you to decrease the rating of user
 
 !rating [user] shows the current rating of a user
 
