@@ -109,7 +109,7 @@ def parse_input(input_string):
         return "Error"
 
 @bot.command()
-async def stonks(ctx, username, input):
+async def buy(ctx, username, input):
     #caller of command by unique discord username
     author = ctx.author.name
 
@@ -145,23 +145,12 @@ async def stonks(ctx, username, input):
     entry = currency_collection.find_one({"author": author})
     amount_positive = entry["amount_positive"]
     amount_negative = entry["amount_negative"]
-    if sign == "+":
-        if amount_positive - integer >= 0:
-            new_value = {"$set": {"amount_positive" : amount_positive - integer}}
-            currency_collection.update_one(entry, new_value)
-        else:
-            await ctx.send("Not enough daily currency! Positive amount remaining: " + str(amount_positive) + ". Negative amount remaining: " + str(amount_negative))
-            return
-    elif sign == "-":
-        if amount_negative - integer >= 0:
-            new_value = {"$set": {"amount_negative" : amount_negative - integer}}
-            currency_collection.update_one(entry, new_value)
-        else:
-            await ctx.send("Not enough daily currency! Positive amount remaining: " + str(amount_positive) + ". Negative amount remaining: " + str(amount_negative))
-            return
+    if amount_positive - integer >= 0:
+        new_value = {"$set": {"amount_positive" : amount_positive - integer}}
+        currency_collection.update_one(entry, new_value)
     else:
-        #will want to throw error
-        print("there was an error")
+        await ctx.send("Not enough daily currency! Buy amount remaining: " + str(amount_positive) + ". Sell amount remaining: " + str(amount_negative))
+        return
 
     #Update ranking for the member specified based on amount
     #First have to check if member is in the ranking DB, otherwise add them
@@ -181,22 +170,90 @@ async def stonks(ctx, username, input):
     entry = ranking_collection.find_one({"member": member})
     current_ranking = entry["ranking"]
     rank_emoji = None
-    if sign == "+":
-        new_value = {"$set": { "ranking": current_ranking + integer, "ranking_delta": 1 }}
-        ranking_collection.update_one(entry, new_value)
-        rank_emoji = ":chart_with_upwards_trend:"
-    elif sign == "-":
-        new_value = {"$set": { "ranking": current_ranking - integer, "ranking_delta": -1 }}
-        ranking_collection.update_one(entry, new_value)
-        rank_emoji = ":chart_with_downwards_trend:"
-    else:
-        await ctx.send("Invalid Format")
+    new_value = {"$set": { "ranking": current_ranking + integer, "ranking_delta": 1 }}
+    ranking_collection.update_one(entry, new_value)
+    rank_emoji = ":chart_with_upwards_trend:"
 
     new_rank = ranking_collection.find_one({"member": member})["ranking"]
     await ctx.send("Updated rating for " + username + "! New rating is: " + str(new_rank) + " " + rank_emoji)
 
-@stonks.error
-async def stonks_error(ctx, error):
+@bot.command()
+async def sell(ctx, username, input):
+    #caller of command by unique discord username
+    author = ctx.author.name
+
+    #parse input
+    result = parse_input(input)
+    if result == "Error":
+        await ctx.send("Error, wrong format!")
+        return
+    sign, integer = result
+
+    #check if user exists
+    member = find_member(ctx.guild, username).name
+
+    #make sure you can't rate yourself
+    if member == author:
+        await ctx.send("You cannot give rating to yourself!")
+        return
+
+    #check if author is in the currency table. if they are not, add them.
+    currency_document = currency_collection.find_one({"author": author})
+    if currency_document:
+        print(f"The person already exists in the document.")
+    else:
+        print(f"The person does not exist in the document. Inserting...")
+        data = {
+            "author": author,
+            "amount_positive": MAX_USER_DAILY_RANKING_CURRENCY,
+            "amount_negative": MAX_USER_DAILY_RANKING_CURRENCY,
+        }
+        currency_collection.insert_one(data)
+    
+    #Check if user exceeds their daily limit. If so, give error. Else, subtract.
+    entry = currency_collection.find_one({"author": author})
+    amount_positive = entry["amount_positive"]
+    amount_negative = entry["amount_negative"]
+    if amount_negative - integer >= 0:
+        new_value = {"$set": {"amount_negative" : amount_negative - integer}}
+        currency_collection.update_one(entry, new_value)
+    else:
+        await ctx.send("Not enough daily currency! Buy amount remaining: " + str(amount_positive) + ". Sell amount remaining: " + str(amount_negative))
+        return
+
+    #Update ranking for the member specified based on amount
+    #First have to check if member is in the ranking DB, otherwise add them
+    ranking_document = ranking_collection.find_one({"member": member})
+    if ranking_document:
+        print(f"The person already exists in the ranking document.")
+    else:
+        print(f"The person does not exist in the ranking document. Inserting...")
+        data = {
+            "member": member,
+            "ranking": 0,
+            "ranking_delta": 0
+        }
+        ranking_collection.insert_one(data)
+    
+    #Now we update their ranking
+    entry = ranking_collection.find_one({"member": member})
+    current_ranking = entry["ranking"]
+    rank_emoji = None
+    new_value = {"$set": { "ranking": current_ranking - integer, "ranking_delta": -1 }}
+    ranking_collection.update_one(entry, new_value)
+    rank_emoji = ":chart_with_downwards_trend:"
+
+    new_rank = ranking_collection.find_one({"member": member})["ranking"]
+    await ctx.send("Updated rating for " + username + "! New rating is: " + str(new_rank) + " " + rank_emoji)
+
+
+@buy.error
+async def buy_error(ctx, error):
+    if isinstance(error, commands.errors.UserNotFound):
+        await ctx.send("User not on server")
+
+@sell.error
+async def sell_error(ctx, error):
     if isinstance(error, commands.errors.UserNotFound):
         await ctx.send("User not on server")
 
