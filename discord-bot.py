@@ -149,7 +149,7 @@ async def buy(ctx, username, input):
         new_value = {"$set": {"amount_positive" : amount_positive - integer}}
         currency_collection.update_one(entry, new_value)
     else:
-        await ctx.send("Not enough daily currency! Buy amount remaining: " + str(amount_positive) + ". Sell amount remaining: " + str(amount_negative))
+        await ctx.send("Not enough daily currency! Buy amount remaining: " + str(amount_positive) + ". Sell amount remaining: " + str(amount_negative) + ".")
         return
 
     #Update ranking for the member specified based on amount
@@ -218,7 +218,7 @@ async def sell(ctx, username, input):
         new_value = {"$set": {"amount_negative" : amount_negative - integer}}
         currency_collection.update_one(entry, new_value)
     else:
-        await ctx.send("Not enough daily currency! Buy amount remaining: " + str(amount_positive) + ". Sell amount remaining: " + str(amount_negative))
+        await ctx.send("Not enough daily currency! Buy amount remaining: " + str(amount_positive) + ". Sell amount remaining: " + str(amount_negative) + ".")
         return
 
     #Update ranking for the member specified based on amount
@@ -264,10 +264,10 @@ async def currency(ctx):
     if currency_document:
         amount_positive = currency_document["amount_positive"]
         amount_negative = currency_document["amount_negative"]
-        await ctx.send("You have +" + str(amount_positive) + " and -" + str(amount_negative) + " left to spend for today!")
+        await ctx.send("You have " + str(amount_positive) + " buying power and " + str(amount_negative) + " selling power left to spend for today!")
         return
     else:
-        await ctx.send("You are not yet in the system. Use the [!stonks <user> <+/-><number>] command to register!")
+        await ctx.send("You are not yet in the system.")
         return
  
 bot.run(BOT_TOKEN)
