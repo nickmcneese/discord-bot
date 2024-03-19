@@ -113,9 +113,9 @@ def parse_input(input_string):
 
 def undesirable_members_check(author):
     if author == "nathyroocka":
-        return "Goverment passes. Unanimous decision."
+        return "Government passes unanimous decision."
     elif author == "specialsc2":
-        return "This currency is in dollars, not pesos. Please submit visa application"
+        return "This currency is in dollars, not pesos. Visa application received. Processing..."
     else:
         return None
 
