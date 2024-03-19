@@ -207,7 +207,6 @@ async def sell(ctx, username, input):
             await ctx.send(result)
             return
 
-
         #parse input
         result = parse_input(input)
         if result == "Error":
