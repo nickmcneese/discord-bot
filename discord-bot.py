@@ -25,6 +25,7 @@ bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 
 channel_ID = 1216465914795655168 #channel ID for the bot to work in
 
+
 @bot.event
 async def on_guild_join(guild):
     print(f"Added to {guild.name}. Adding all members to the databases...")
@@ -110,11 +111,25 @@ def parse_input(input_string):
         # Invalid format
         return "Error"
 
+def undesirable_members_check(author):
+    if author == "nathyroocka":
+        return "Goverment passes. Unanimous decision."
+    elif author == "specialsc2":
+        return "This currency is in dollars, not pesos. Please submit visa application"
+    else:
+        return None
+
 @bot.command()
 async def buy(ctx, username, input):
     if ctx.channel.id == channel_ID:
         #caller of command by unique discord username
         author = ctx.author.name
+
+        #check if author is undesirable
+        result = undesirable_members_check(author)
+        if result:
+            await ctx.send(result)
+            return
 
         #parse input
         result = parse_input(input)
