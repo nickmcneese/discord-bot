@@ -201,6 +201,13 @@ async def sell(ctx, username, input):
         #caller of command by unique discord username
         author = ctx.author.name
 
+        #check if author is undesirable
+        result = undesirable_members_check(author)
+        if result:
+            await ctx.send(result)
+            return
+
+
         #parse input
         result = parse_input(input)
         if result == "Error":
