@@ -269,6 +269,24 @@ async def sell(ctx, username, input):
         new_rank = ranking_collection.find_one({"member": member})["ranking"]
         await ctx.send("Updated rating for " + username + "! New rating is: " + str(new_rank) + " " + rank_emoji)
 
+@bot.command()
+async def short(ctx, username, input):
+    if ctx.channel.id == channel_ID:
+        #caller of command by unique discord username
+        author = ctx.author.name
+
+        #check if author is undesirable
+        result = undesirable_members_check(author)
+        if result:
+            await ctx.send(result)
+            return
+
+        #parse input
+        if username.lower() != "jamileon":
+            await ctx.send("Only Jamileon is short!")
+            return
+        
+        await ctx.send("!jamileon")
 
 @buy.error
 async def buy_error(ctx, error):
