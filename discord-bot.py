@@ -271,6 +271,7 @@ async def sell(ctx, username, input):
 
 @bot.command()
 async def short(ctx, username, input):
+    await ctx.send("TEST")
     if ctx.channel.id == channel_ID:
         #caller of command by unique discord username
         author = ctx.author.name
