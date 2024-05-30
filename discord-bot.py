@@ -270,7 +270,7 @@ async def sell(ctx, username, input):
         await ctx.send("Updated rating for " + username + "! New rating is: " + str(new_rank) + " " + rank_emoji)
 
 @bot.command()
-async def short(ctx, username, input):
+async def short(ctx, username):
     await ctx.send("TEST")
     if ctx.channel.id == channel_ID:
         #caller of command by unique discord username
@@ -282,7 +282,7 @@ async def short(ctx, username, input):
             await ctx.send(result)
             return
 
-        #parse input
+        #parse username
         if username.lower() != "jamileon":
             await ctx.send("Only Jamileon is short!")
             return
