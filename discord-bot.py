@@ -286,7 +286,7 @@ async def short(ctx, username):
             await ctx.send("Only Jamileon is short!")
             return
         
-        await ctx.send("!jamileon")
+        await ctx.send("https://imgur.com/1taPegm")    
 
 @buy.error
 async def buy_error(ctx, error):
